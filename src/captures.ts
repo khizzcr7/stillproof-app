@@ -5,7 +5,7 @@ import { useSyncExternalStore } from 'react';
 
 import { fetchReceipt, submitClaim, type ReceiptResult } from './api';
 import { NETWORK } from './config';
-import { deviceKey } from './keys';
+import { deviceKey, type KeyLevel } from './keys';
 import { buildClaim, claimId, signClaim, signedText } from './protocol/claim';
 import { ReceiptFormatError } from './protocol/receipt';
 
@@ -19,6 +19,8 @@ export type Capture = {
   captured: string;
   photo: string;
   status: CaptureStatus;
+  /** The key level at signing time, from key.level. Absent on captures stored before this was recorded: they show as software. */
+  level?: KeyLevel;
   error?: string;
   receipt?: string;
 };
@@ -89,7 +91,7 @@ export async function createCapture(pictureUri: string, capturedAt: number): Pro
   staged.rename(photo);
   source.delete();
 
-  const capture: Capture = { id, signed: signedText(signed), type, captured: String(capturedAt), photo, status: 'pending' };
+  const capture: Capture = { id, signed: signedText(signed), type, captured: String(capturedAt), photo, status: 'pending', level: key.level };
   save([capture, ...all().filter((c) => c.id !== id)]);
   await submit(capture);
   return capture;
