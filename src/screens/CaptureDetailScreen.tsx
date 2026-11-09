@@ -89,7 +89,7 @@ export default function CaptureDetailScreen({ route }: ScreenProps<'Detail'>) {
       <Hash label="File SHA-256" sha256={fileHash} />
       <Hash label="Claim id" sha256={capture.id} />
       <Field label="Device clock at capture" value={time} />
-      {!anchored && <Field label="Key level" value={KEY_LEVEL} />}
+      {!anchored && <Field label="Key level at signing" value={capture.level ?? KEY_LEVEL} />}
 
       <Rule />
       <View style={styles.block}>
